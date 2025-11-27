@@ -1,0 +1,884 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Furyashnyy | Web Developer</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #9745f5;
+            --secondary: #6366f1;
+            --accent: #ec4899;
+            --dark: #0d1117;
+            --darker: #010409;
+            --light: #f8fafc;
+            --gray: #8b949e;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--darker);
+            color: var(--light);
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        /* Liquid Background Canvas */
+        #liquid-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            padding: 1.5rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: linear-gradient(180deg, rgba(1, 4, 9, 0.9) 0%, transparent 100%);
+            transition: all 0.3s ease;
+        }
+
+        nav.scrolled {
+            background: rgba(1, 4, 9, 0.95);
+            backdrop-filter: blur(20px);
+            padding: 1rem 2rem;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--gray);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+            position: relative;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            transition: width 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            color: var(--light);
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            position: relative;
+        }
+
+        .hero-content {
+            text-align: center;
+            max-width: 900px;
+            animation: fadeInUp 1s ease;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .hero-avatar {
+            width: 180px;
+            height: 180px;
+            border-radius: 50%;
+            border: 4px solid transparent;
+            background: linear-gradient(var(--darker), var(--darker)) padding-box,
+                        linear-gradient(135deg, var(--primary), var(--accent)) border-box;
+            margin: 0 auto 2rem;
+            overflow: hidden;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+
+        .hero-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .hero h1 {
+            font-size: clamp(2.5rem, 8vw, 5rem);
+            font-weight: 800;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, #fff 0%, var(--gray) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-subtitle {
+            font-size: clamp(1.2rem, 3vw, 1.8rem);
+            color: var(--gray);
+            margin-bottom: 2rem;
+        }
+
+        .hero-subtitle span {
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: 600;
+        }
+
+        .hero-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            justify-content: center;
+            margin-bottom: 2rem;
+        }
+
+        .hero-tag {
+            padding: 0.5rem 1.5rem;
+            background: rgba(151, 69, 245, 0.1);
+            border: 1px solid rgba(151, 69, 245, 0.3);
+            border-radius: 50px;
+            font-size: 0.9rem;
+            color: var(--primary);
+            transition: all 0.3s ease;
+        }
+
+        .hero-tag:hover {
+            background: rgba(151, 69, 245, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .scroll-indicator {
+            position: absolute;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateX(-50%) translateY(0); }
+            50% { transform: translateX(-50%) translateY(10px); }
+        }
+
+        .scroll-indicator svg {
+            width: 30px;
+            height: 30px;
+            stroke: var(--gray);
+        }
+
+        /* Sections */
+        section {
+            padding: 6rem 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .section-title {
+            font-size: clamp(2rem, 5vw, 3rem);
+            font-weight: 800;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+
+        .section-subtitle {
+            color: var(--gray);
+            text-align: center;
+            max-width: 600px;
+            margin: 0 auto 4rem;
+        }
+
+        /* About Section */
+        .about-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+        }
+
+        .about-card {
+            background: linear-gradient(145deg, rgba(13, 17, 23, 0.8), rgba(13, 17, 23, 0.4));
+            border: 1px solid rgba(151, 69, 245, 0.1);
+            border-radius: 20px;
+            padding: 2rem;
+            transition: all 0.4s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .about-card:hover {
+            transform: translateY(-10px);
+            border-color: rgba(151, 69, 245, 0.3);
+            box-shadow: 0 20px 60px rgba(151, 69, 245, 0.15);
+        }
+
+        .about-card-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+            font-size: 1.5rem;
+        }
+
+        .about-card h3 {
+            font-size: 1.3rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .about-card p {
+            color: var(--gray);
+        }
+
+        /* Skills Section */
+        .skills-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            justify-content: center;
+        }
+
+        .skill-item {
+            padding: 1rem 2rem;
+            background: rgba(13, 17, 23, 0.6);
+            border: 1px solid rgba(151, 69, 245, 0.2);
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            transition: all 0.3s ease;
+            cursor: default;
+        }
+
+        .skill-item:hover {
+            transform: scale(1.05);
+            border-color: var(--primary);
+            background: rgba(151, 69, 245, 0.1);
+        }
+
+        .skill-item img {
+            width: 24px;
+            height: 24px;
+        }
+
+        /* Projects Section */
+        .projects-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+        }
+
+        .project-card {
+            background: linear-gradient(145deg, rgba(13, 17, 23, 0.9), rgba(13, 17, 23, 0.5));
+            border: 1px solid rgba(151, 69, 245, 0.1);
+            border-radius: 20px;
+            overflow: hidden;
+            transition: all 0.4s ease;
+        }
+
+        .project-card:hover {
+            transform: translateY(-10px);
+            border-color: rgba(151, 69, 245, 0.4);
+            box-shadow: 0 30px 80px rgba(151, 69, 245, 0.2);
+        }
+
+        .project-header {
+            padding: 2rem;
+            background: linear-gradient(135deg, rgba(151, 69, 245, 0.1), rgba(236, 72, 153, 0.1));
+        }
+
+        .project-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .project-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .project-card p {
+            color: var(--gray);
+            padding: 0 2rem 2rem;
+        }
+
+        .project-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin: 0 2rem 2rem;
+            padding: 0.75rem 1.5rem;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            text-decoration: none;
+            border-radius: 10px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .project-link:hover {
+            transform: translateX(5px);
+            box-shadow: 0 10px 30px rgba(151, 69, 245, 0.4);
+        }
+
+        /* Contact Section */
+        .contact-container {
+            text-align: center;
+        }
+
+        .contact-links {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+            justify-content: center;
+            margin-top: 3rem;
+        }
+
+        .contact-link {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1.5rem 2.5rem;
+            background: rgba(13, 17, 23, 0.6);
+            border: 1px solid rgba(151, 69, 245, 0.2);
+            border-radius: 15px;
+            color: var(--light);
+            text-decoration: none;
+            transition: all 0.4s ease;
+        }
+
+        .contact-link:hover {
+            transform: translateY(-5px) scale(1.02);
+            border-color: var(--primary);
+            background: rgba(151, 69, 245, 0.1);
+            box-shadow: 0 20px 50px rgba(151, 69, 245, 0.2);
+        }
+
+        .contact-link svg {
+            width: 28px;
+            height: 28px;
+        }
+
+        .contact-link.youtube:hover {
+            border-color: #ff0000;
+            box-shadow: 0 20px 50px rgba(255, 0, 0, 0.2);
+        }
+
+        .contact-link.discord:hover {
+            border-color: #5865f2;
+            box-shadow: 0 20px 50px rgba(88, 101, 242, 0.2);
+        }
+
+        .contact-link.telegram:hover {
+            border-color: #26a5e4;
+            box-shadow: 0 20px 50px rgba(38, 165, 228, 0.2);
+        }
+
+        .contact-link.github:hover {
+            border-color: #fff;
+            box-shadow: 0 20px 50px rgba(255, 255, 255, 0.1);
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 3rem 2rem;
+            color: var(--gray);
+            border-top: 1px solid rgba(151, 69, 245, 0.1);
+        }
+
+        footer span {
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* Mobile Menu */
+        .mobile-menu-btn {
+            display: none;
+            flex-direction: column;
+            gap: 5px;
+            cursor: pointer;
+            padding: 5px;
+        }
+
+        .mobile-menu-btn span {
+            width: 25px;
+            height: 2px;
+            background: var(--light);
+            transition: all 0.3s ease;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .mobile-menu-btn {
+                display: flex;
+            }
+
+            .nav-links {
+                position: fixed;
+                top: 0;
+                right: -100%;
+                height: 100vh;
+                width: 100%;
+                max-width: 300px;
+                flex-direction: column;
+                background: rgba(1, 4, 9, 0.98);
+                padding: 5rem 2rem;
+                transition: right 0.3s ease;
+            }
+
+            .nav-links.active {
+                right: 0;
+            }
+
+            .projects-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .contact-link {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+
+        /* Smooth reveal animation on scroll */
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s ease;
+        }
+
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body>
+    <!-- Liquid Background -->
+    <canvas id="liquid-bg"></canvas>
+
+    <!-- Navigation -->
+    <nav>
+        <div class="logo">Furyashnyy</div>
+        <ul class="nav-links">
+            <li><a href="#home">Главная</a></li>
+            <li><a href="#about">Обо мне</a></li>
+            <li><a href="#skills">Навыки</a></li>
+            <li><a href="#projects">Проекты</a></li>
+            <li><a href="#contact">Контакты</a></li>
+        </ul>
+        <div class="mobile-menu-btn" onclick="toggleMenu()">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero" id="home">
+        <div class="hero-content">
+            <div class="hero-avatar">
+                <img src="https://avatars.githubusercontent.com/u/124055879?v=4" alt="Furyashnyy Avatar">
+            </div>
+            <h1>Привет, я Furyashnyy! 👋</h1>
+            <p class="hero-subtitle"><span>Web Developer</span> • 15 лет • Москва</p>
+            <div class="hero-tags">
+                <span class="hero-tag">🌐 Веб-разработка</span>
+                <span class="hero-tag">🤖 Боты</span>
+                <span class="hero-tag">🔧 Серверы</span>
+                <span class="hero-tag">🎓 Школа 1788</span>
+            </div>
+        </div>
+        <div class="scroll-indicator">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+            </svg>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about">
+        <h2 class="section-title reveal">Обо мне</h2>
+        <p class="section-subtitle reveal">Молодой разработчик из Москвы, увлеченный созданием красивых и функциональных веб-приложений</p>
+        
+        <div class="about-grid">
+            <div class="about-card reveal">
+                <div class="about-card-icon">🚀</div>
+                <h3>Веб-разработка</h3>
+                <p>Создаю современные веб-сайты и приложения с использованием HTML, CSS, JavaScript и Node.js</p>
+            </div>
+            <div class="about-card reveal">
+                <div class="about-card-icon">🤖</div>
+                <h3>Боты и автоматизация</h3>
+                <p>Разрабатываю Discord и Telegram ботов для автоматизации задач и улучшения пользовательского опыта</p>
+            </div>
+            <div class="about-card reveal">
+                <div class="about-card-icon">🔧</div>
+                <h3>Серверная инфраструктура</h3>
+                <p>Работаю с Nginx, Cloudflare и Linux серверами для создания надежных и быстрых приложений</p>
+            </div>
+            <div class="about-card reveal">
+                <div class="about-card-icon">📚</div>
+                <h3>Постоянное обучение</h3>
+                <p>Всегда изучаю новые технологии и совершенствую свои навыки в программировании</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Skills Section -->
+    <section id="skills">
+        <h2 class="section-title reveal">Навыки и технологии</h2>
+        <p class="section-subtitle reveal">Инструменты, которые я использую в своих проектах</p>
+        
+        <div class="skills-container reveal">
+            <div class="skill-item">
+                <img src="https://cdn.simpleicons.org/html5/E34F26" alt="HTML5">
+                <span>HTML5</span>
+            </div>
+            <div class="skill-item">
+                <img src="https://cdn.simpleicons.org/css3/1572B6" alt="CSS3">
+                <span>CSS3</span>
+            </div>
+            <div class="skill-item">
+                <img src="https://cdn.simpleicons.org/javascript/F7DF1E" alt="JavaScript">
+                <span>JavaScript</span>
+            </div>
+            <div class="skill-item">
+                <img src="https://cdn.simpleicons.org/nodedotjs/339933" alt="Node.js">
+                <span>Node.js</span>
+            </div>
+            <div class="skill-item">
+                <img src="https://cdn.simpleicons.org/nginx/009639" alt="Nginx">
+                <span>Nginx</span>
+            </div>
+            <div class="skill-item">
+                <img src="https://cdn.simpleicons.org/cloudflare/F38020" alt="Cloudflare">
+                <span>Cloudflare</span>
+            </div>
+            <div class="skill-item">
+                <img src="https://cdn.simpleicons.org/linux/FCC624" alt="Linux">
+                <span>Linux</span>
+            </div>
+            <div class="skill-item">
+                <img src="https://cdn.simpleicons.org/gnubash/4EAA25" alt="Shell">
+                <span>Shell</span>
+            </div>
+            <div class="skill-item">
+                <img src="https://cdn.simpleicons.org/discord/5865F2" alt="Discord Bots">
+                <span>Discord Bots</span>
+            </div>
+            <div class="skill-item">
+                <img src="https://cdn.simpleicons.org/git/F05032" alt="Git">
+                <span>Git</span>
+            </div>
+            <div class="skill-item">
+                <img src="https://cdn.simpleicons.org/github/fff" alt="GitHub">
+                <span>GitHub</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Projects Section -->
+    <section id="projects">
+        <h2 class="section-title reveal">Мои проекты</h2>
+        <p class="section-subtitle reveal">Проекты, над которыми я работаю</p>
+        
+        <div class="projects-grid">
+            <div class="project-card reveal">
+                <div class="project-header">
+                    <div class="project-icon">🎯</div>
+                    <h3>obscpsl.ru</h3>
+                </div>
+                <p>Веб-приложение личного SCP:SL проекта, написанного на TypeScript. Современный интерфейс и функциональность для игрового сообщества.</p>
+                <a href="https://obscpsl.ru" target="_blank" class="project-link">
+                    Открыть сайт
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                        <path fill-rule="evenodd" d="M8.636 3.5a.5.5 0 0 0-.5-.5H1.5A1.5 1.5 0 0 0 0 4.5v10A1.5 1.5 0 0 0 1.5 16h10a1.5 1.5 0 0 0 1.5-1.5V7.864a.5.5 0 0 0-1 0V14.5a.5.5 0 0 1-.5.5h-10a.5.5 0 0 1-.5-.5v-10a.5.5 0 0 1 .5-.5h6.636a.5.5 0 0 0 .5-.5z"/>
+                        <path fill-rule="evenodd" d="M16 .5a.5.5 0 0 0-.5-.5h-5a.5.5 0 0 0 0 1h3.793L6.146 9.146a.5.5 0 1 0 .708.708L15 1.707V5.5a.5.5 0 0 0 1 0v-5z"/>
+                    </svg>
+                </a>
+            </div>
+            <div class="project-card reveal">
+                <div class="project-header">
+                    <div class="project-icon">🏠</div>
+                    <h3>Личный сайт</h3>
+                </div>
+                <p>Мой персональный сайт-портфолио с красивым дизайном, 3D анимациями и информацией обо мне.</p>
+                <a href="https://github.com/furyashnyy" target="_blank" class="project-link">
+                    GitHub профиль
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                        <path fill-rule="evenodd" d="M8.636 3.5a.5.5 0 0 0-.5-.5H1.5A1.5 1.5 0 0 0 0 4.5v10A1.5 1.5 0 0 0 1.5 16h10a1.5 1.5 0 0 0 1.5-1.5V7.864a.5.5 0 0 0-1 0V14.5a.5.5 0 0 1-.5.5h-10a.5.5 0 0 1-.5-.5v-10a.5.5 0 0 1 .5-.5h6.636a.5.5 0 0 0 .5-.5z"/>
+                        <path fill-rule="evenodd" d="M16 .5a.5.5 0 0 0-.5-.5h-5a.5.5 0 0 0 0 1h3.793L6.146 9.146a.5.5 0 1 0 .708.708L15 1.707V5.5a.5.5 0 0 0 1 0v-5z"/>
+                    </svg>
+                </a>
+            </div>
+            <div class="project-card reveal">
+                <div class="project-header">
+                    <div class="project-icon">🔜</div>
+                    <h3>Новые проекты</h3>
+                </div>
+                <p>Скоро здесь появятся новые интересные проекты. Следите за обновлениями!</p>
+                <a href="https://github.com/furyashnyy" target="_blank" class="project-link">
+                    Следить за обновлениями
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                        <path fill-rule="evenodd" d="M8.636 3.5a.5.5 0 0 0-.5-.5H1.5A1.5 1.5 0 0 0 0 4.5v10A1.5 1.5 0 0 0 1.5 16h10a1.5 1.5 0 0 0 1.5-1.5V7.864a.5.5 0 0 0-1 0V14.5a.5.5 0 0 1-.5.5h-10a.5.5 0 0 1-.5-.5v-10a.5.5 0 0 1 .5-.5h6.636a.5.5 0 0 0 .5-.5z"/>
+                        <path fill-rule="evenodd" d="M16 .5a.5.5 0 0 0-.5-.5h-5a.5.5 0 0 0 0 1h3.793L6.146 9.146a.5.5 0 1 0 .708.708L15 1.707V5.5a.5.5 0 0 0 1 0v-5z"/>
+                    </svg>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact">
+        <h2 class="section-title reveal">Свяжитесь со мной</h2>
+        <p class="section-subtitle reveal">Буду рад пообщаться и ответить на ваши вопросы</p>
+        
+        <div class="contact-container reveal">
+            <div class="contact-links">
+                <a href="https://www.youtube.com/@furyashnyy" target="_blank" class="contact-link youtube">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="#FF0000" viewBox="0 0 24 24">
+                        <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+                    </svg>
+                    YouTube
+                </a>
+                <a href="https://discord.gg/S86AtNGX9f" target="_blank" class="contact-link discord">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="#5865F2" viewBox="0 0 24 24">
+                        <path d="M20.317 4.3698a19.7913 19.7913 0 00-4.8851-1.5152.0741.0741 0 00-.0785.0371c-.211.3753-.4447.8648-.6083 1.2495-1.8447-.2762-3.68-.2762-5.4868 0-.1636-.3933-.4058-.8742-.6177-1.2495a.077.077 0 00-.0785-.037 19.7363 19.7363 0 00-4.8852 1.515.0699.0699 0 00-.0321.0277C.5334 9.0458-.319 13.5799.0992 18.0578a.0824.0824 0 00.0312.0561c2.0528 1.5076 4.0413 2.4228 5.9929 3.0294a.0777.0777 0 00.0842-.0276c.4616-.6304.8731-1.2952 1.226-1.9942a.076.076 0 00-.0416-.1057c-.6528-.2476-1.2743-.5495-1.8722-.8923a.077.077 0 01-.0076-.1277c.1258-.0943.2517-.1923.3718-.2914a.0743.0743 0 01.0776-.0105c3.9278 1.7933 8.18 1.7933 12.0614 0a.0739.0739 0 01.0785.0095c.1202.099.246.1981.3728.2924a.077.077 0 01-.0066.1276 12.2986 12.2986 0 01-1.873.8914.0766.0766 0 00-.0407.1067c.3604.698.7719 1.3628 1.225 1.9932a.076.076 0 00.0842.0286c1.961-.6067 3.9495-1.5219 6.0023-3.0294a.077.077 0 00.0313-.0552c.5004-5.177-.8382-9.6739-3.5485-13.6604a.061.061 0 00-.0312-.0286zM8.02 15.3312c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9555-2.4189 2.157-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.9555 2.4189-2.1569 2.4189zm7.9748 0c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9554-2.4189 2.1569-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.946 2.4189-2.1568 2.4189Z"/>
+                    </svg>
+                    Discord
+                </a>
+                <a href="https://t.me/furyashnyy" target="_blank" class="contact-link telegram">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="#26A5E4" viewBox="0 0 24 24">
+                        <path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/>
+                    </svg>
+                    Telegram
+                </a>
+                <a href="https://github.com/furyashnyy" target="_blank" class="contact-link github">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="#fff" viewBox="0 0 24 24">
+                        <path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/>
+                    </svg>
+                    GitHub
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <p>© 2024 <span>Furyashnyy</span>. Создано с ❤️</p>
+    </footer>
+
+    <script>
+        // Liquid Abstract Background Animation
+        const canvas = document.getElementById('liquid-bg');
+        const ctx = canvas.getContext('2d');
+
+        let width, height;
+        let time = 0;
+        let scrollY = 0;
+
+        function resize() {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+        }
+
+        window.addEventListener('resize', resize);
+        resize();
+
+        // Blob class for liquid effect
+        class Blob {
+            constructor(x, y, radius, color) {
+                this.x = x;
+                this.y = y;
+                this.radius = radius;
+                this.color = color;
+                this.vx = (Math.random() - 0.5) * 0.5;
+                this.vy = (Math.random() - 0.5) * 0.5;
+                this.originalX = x;
+                this.originalY = y;
+            }
+
+            update(time, scrollOffset) {
+                // Organic movement
+                this.x = this.originalX + Math.sin(time * 0.001 + this.originalX * 0.01) * 100;
+                this.y = this.originalY + Math.cos(time * 0.0008 + this.originalY * 0.01) * 80 - scrollOffset * 0.3;
+                
+                // Add some noise
+                this.x += Math.sin(time * 0.003 + this.y * 0.02) * 30;
+                this.y += Math.cos(time * 0.002 + this.x * 0.02) * 30;
+            }
+
+            draw(ctx) {
+                const gradient = ctx.createRadialGradient(
+                    this.x, this.y, 0,
+                    this.x, this.y, this.radius
+                );
+                gradient.addColorStop(0, this.color);
+                gradient.addColorStop(1, 'transparent');
+                
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                ctx.fillStyle = gradient;
+                ctx.fill();
+            }
+        }
+
+        // Create blobs
+        const blobs = [];
+        const colors = [
+            'rgba(151, 69, 245, 0.4)',   // Primary purple
+            'rgba(99, 102, 241, 0.3)',    // Indigo
+            'rgba(236, 72, 153, 0.3)',    // Pink
+            'rgba(59, 130, 246, 0.25)',   // Blue
+            'rgba(139, 92, 246, 0.35)',   // Violet
+        ];
+
+        function createBlobs() {
+            blobs.length = 0;
+            for (let i = 0; i < 8; i++) {
+                const x = Math.random() * width;
+                const y = Math.random() * height * 3; // Extend for scrolling
+                const radius = 200 + Math.random() * 300;
+                const color = colors[Math.floor(Math.random() * colors.length)];
+                blobs.push(new Blob(x, y, radius, color));
+            }
+        }
+
+        createBlobs();
+        window.addEventListener('resize', createBlobs);
+
+        // Track scroll position
+        window.addEventListener('scroll', () => {
+            scrollY = window.pageYOffset;
+        });
+
+        // Animation loop
+        function animate() {
+            time++;
+            
+            // Clear with dark background
+            ctx.fillStyle = 'rgba(1, 4, 9, 0.1)';
+            ctx.fillRect(0, 0, width, height);
+            
+            // Enable additive blending for glow effect
+            ctx.globalCompositeOperation = 'lighter';
+            
+            // Update and draw blobs
+            blobs.forEach(blob => {
+                blob.update(time, scrollY);
+                blob.draw(ctx);
+            });
+            
+            // Reset composite operation
+            ctx.globalCompositeOperation = 'source-over';
+            
+            requestAnimationFrame(animate);
+        }
+
+        animate();
+
+        // Navigation scroll effect
+        const nav = document.querySelector('nav');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 50) {
+                nav.classList.add('scrolled');
+            } else {
+                nav.classList.remove('scrolled');
+            }
+        });
+
+        // Mobile menu toggle
+        function toggleMenu() {
+            document.querySelector('.nav-links').classList.toggle('active');
+        }
+
+        // Close mobile menu when clicking a link
+        document.querySelectorAll('.nav-links a').forEach(link => {
+            link.addEventListener('click', () => {
+                document.querySelector('.nav-links').classList.remove('active');
+            });
+        });
+
+        // Scroll reveal animation
+        const revealElements = document.querySelectorAll('.reveal');
+        
+        function reveal() {
+            revealElements.forEach(element => {
+                const windowHeight = window.innerHeight;
+                const elementTop = element.getBoundingClientRect().top;
+                const elementVisible = 150;
+                
+                if (elementTop < windowHeight - elementVisible) {
+                    element.classList.add('active');
+                }
+            });
+        }
+
+        window.addEventListener('scroll', reveal);
+        reveal(); // Initial check
+    </script>
+</body>
+</html>
