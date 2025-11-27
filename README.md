@@ -1,1 +1,1 @@
-# furyashnyy-furyashnyy.github.io
+# furyashnyy.github.io
