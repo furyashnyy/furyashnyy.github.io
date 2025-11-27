@@ -540,7 +540,7 @@
     <section class="hero" id="home">
         <div class="hero-content">
             <div class="hero-avatar">
-                <img src="https://avatars.githubusercontent.com/u/124055879?v=4" alt="Furyashnyy Avatar">
+                <img src="https://avatars.githubusercontent.com/u/124055879?v=4" alt="Furyashnyy Avatar" onerror="this.style.display='none'; this.parentElement.innerHTML='<div style=\'width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:4rem;background:linear-gradient(135deg,var(--primary),var(--accent))\'>F</div>';">
             </div>
             <h1>Привет, я Furyashnyy! 👋</h1>
             <p class="hero-subtitle"><span>Web Developer</span> • 15 лет • Москва</p>
@@ -594,47 +594,47 @@
         
         <div class="skills-container reveal">
             <div class="skill-item">
-                <img src="https://cdn.simpleicons.org/html5/E34F26" alt="HTML5">
+                <img src="https://cdn.simpleicons.org/html5/E34F26" alt="HTML5" onerror="this.outerHTML='<span style=\'color:#E34F26;font-size:24px\'>⬡</span>'">
                 <span>HTML5</span>
             </div>
             <div class="skill-item">
-                <img src="https://cdn.simpleicons.org/css3/1572B6" alt="CSS3">
+                <img src="https://cdn.simpleicons.org/css3/1572B6" alt="CSS3" onerror="this.outerHTML='<span style=\'color:#1572B6;font-size:24px\'>⬡</span>'">
                 <span>CSS3</span>
             </div>
             <div class="skill-item">
-                <img src="https://cdn.simpleicons.org/javascript/F7DF1E" alt="JavaScript">
+                <img src="https://cdn.simpleicons.org/javascript/F7DF1E" alt="JavaScript" onerror="this.outerHTML='<span style=\'color:#F7DF1E;font-size:24px\'>⬡</span>'">
                 <span>JavaScript</span>
             </div>
             <div class="skill-item">
-                <img src="https://cdn.simpleicons.org/nodedotjs/339933" alt="Node.js">
+                <img src="https://cdn.simpleicons.org/nodedotjs/339933" alt="Node.js" onerror="this.outerHTML='<span style=\'color:#339933;font-size:24px\'>⬡</span>'">
                 <span>Node.js</span>
             </div>
             <div class="skill-item">
-                <img src="https://cdn.simpleicons.org/nginx/009639" alt="Nginx">
+                <img src="https://cdn.simpleicons.org/nginx/009639" alt="Nginx" onerror="this.outerHTML='<span style=\'color:#009639;font-size:24px\'>⬡</span>'">
                 <span>Nginx</span>
             </div>
             <div class="skill-item">
-                <img src="https://cdn.simpleicons.org/cloudflare/F38020" alt="Cloudflare">
+                <img src="https://cdn.simpleicons.org/cloudflare/F38020" alt="Cloudflare" onerror="this.outerHTML='<span style=\'color:#F38020;font-size:24px\'>⬡</span>'">
                 <span>Cloudflare</span>
             </div>
             <div class="skill-item">
-                <img src="https://cdn.simpleicons.org/linux/FCC624" alt="Linux">
+                <img src="https://cdn.simpleicons.org/linux/FCC624" alt="Linux" onerror="this.outerHTML='<span style=\'color:#FCC624;font-size:24px\'>⬡</span>'">
                 <span>Linux</span>
             </div>
             <div class="skill-item">
-                <img src="https://cdn.simpleicons.org/gnubash/4EAA25" alt="Shell">
+                <img src="https://cdn.simpleicons.org/gnubash/4EAA25" alt="Shell" onerror="this.outerHTML='<span style=\'color:#4EAA25;font-size:24px\'>⬡</span>'">
                 <span>Shell</span>
             </div>
             <div class="skill-item">
-                <img src="https://cdn.simpleicons.org/discord/5865F2" alt="Discord Bots">
+                <img src="https://cdn.simpleicons.org/discord/5865F2" alt="Discord Bots" onerror="this.outerHTML='<span style=\'color:#5865F2;font-size:24px\'>⬡</span>'">
                 <span>Discord Bots</span>
             </div>
             <div class="skill-item">
-                <img src="https://cdn.simpleicons.org/git/F05032" alt="Git">
+                <img src="https://cdn.simpleicons.org/git/F05032" alt="Git" onerror="this.outerHTML='<span style=\'color:#F05032;font-size:24px\'>⬡</span>'">
                 <span>Git</span>
             </div>
             <div class="skill-item">
-                <img src="https://cdn.simpleicons.org/github/fff" alt="GitHub">
+                <img src="https://cdn.simpleicons.org/github/fff" alt="GitHub" onerror="this.outerHTML='<span style=\'color:#fff;font-size:24px\'>⬡</span>'">
                 <span>GitHub</span>
             </div>
         </div>
@@ -815,12 +815,18 @@
             scrollY = window.pageYOffset;
         });
 
-        // Animation loop
+        // Animation loop with Page Visibility API for performance
+        let animationId;
+        let isPageVisible = true;
+
         function animate() {
+            if (!isPageVisible) return;
+            
             time++;
             
-            // Clear with dark background
-            ctx.fillStyle = 'rgba(1, 4, 9, 0.1)';
+            // Clear canvas fully and redraw background for better performance
+            ctx.clearRect(0, 0, width, height);
+            ctx.fillStyle = 'rgb(1, 4, 9)';
             ctx.fillRect(0, 0, width, height);
             
             // Enable additive blending for glow effect
@@ -835,8 +841,21 @@
             // Reset composite operation
             ctx.globalCompositeOperation = 'source-over';
             
-            requestAnimationFrame(animate);
+            animationId = requestAnimationFrame(animate);
         }
+
+        // Page Visibility API to pause animation when tab is not active
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden) {
+                isPageVisible = false;
+                if (animationId) {
+                    cancelAnimationFrame(animationId);
+                }
+            } else {
+                isPageVisible = true;
+                animate();
+            }
+        });
 
         animate();
 
