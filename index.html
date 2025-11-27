@@ -513,9 +513,130 @@
             opacity: 1;
             transform: translateY(0);
         }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--darker);
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg, var(--primary), var(--accent));
+            border-radius: 10px;
+            border: 2px solid var(--darker);
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(180deg, var(--accent), var(--primary));
+        }
+
+        /* Firefox scrollbar */
+        * {
+            scrollbar-width: thin;
+            scrollbar-color: var(--primary) var(--darker);
+        }
+
+        /* Custom Cursor (Desktop only) */
+        .cursor {
+            position: fixed;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            pointer-events: none;
+            z-index: 9999;
+            opacity: 0;
+            transform: translate(-50%, -50%) scale(1);
+            transition: opacity 0.3s ease, transform 0.15s ease, width 0.2s ease, height 0.2s ease, background 0.3s ease;
+            box-shadow: 0 0 20px rgba(151, 69, 245, 0.6), 0 0 40px rgba(236, 72, 153, 0.4);
+        }
+
+        .cursor.visible {
+            opacity: 1;
+        }
+
+        .cursor.hover {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--accent), var(--secondary));
+            box-shadow: 0 0 30px rgba(236, 72, 153, 0.8), 0 0 60px rgba(151, 69, 245, 0.5);
+        }
+
+        .cursor.click {
+            transform: translate(-50%, -50%) scale(0.8);
+            background: linear-gradient(135deg, #fff, var(--primary));
+            box-shadow: 0 0 40px rgba(255, 255, 255, 0.8), 0 0 80px rgba(151, 69, 245, 0.6);
+        }
+
+        .cursor-trail {
+            position: fixed;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: rgba(151, 69, 245, 0.5);
+            pointer-events: none;
+            z-index: 9998;
+            opacity: 0;
+            transform: translate(-50%, -50%);
+            transition: opacity 0.5s ease;
+        }
+
+        .cursor-trail.visible {
+            opacity: 1;
+        }
+
+        /* Mobile Click Effect */
+        .click-effect {
+            position: fixed;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(151, 69, 245, 0.6) 0%, rgba(236, 72, 153, 0.4) 50%, transparent 70%);
+            pointer-events: none;
+            z-index: 9999;
+            transform: translate(-50%, -50%);
+            animation: clickRipple 0.6s ease-out forwards;
+        }
+
+        @keyframes clickRipple {
+            0% {
+                width: 0;
+                height: 0;
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.8;
+            }
+            100% {
+                width: 150px;
+                height: 150px;
+                opacity: 0;
+            }
+        }
+
+        /* Hide default cursor on desktop when custom cursor is active */
+        @media (hover: hover) and (pointer: fine) {
+            body {
+                cursor: none;
+            }
+            
+            a, button, .hero-tag, .skill-item, .project-card, .contact-link, .about-card, .nav-links a, .mobile-menu-btn {
+                cursor: none;
+            }
+        }
     </style>
 </head>
 <body>
+    <!-- Custom Cursor Elements (Desktop) -->
+    <div class="cursor" id="cursor"></div>
+    <div class="cursor-trail" id="cursor-trail-1"></div>
+    <div class="cursor-trail" id="cursor-trail-2"></div>
+    <div class="cursor-trail" id="cursor-trail-3"></div>
+
     <!-- Liquid Background -->
     <canvas id="liquid-bg"></canvas>
 
@@ -898,6 +1019,133 @@
 
         window.addEventListener('scroll', reveal);
         reveal(); // Initial check
+
+        // ====== Custom Cursor and Mobile Click Effects ======
+        
+        // Detect if device is touch/mobile
+        const isTouchDevice = () => {
+            return (('ontouchstart' in window) ||
+                (navigator.maxTouchPoints > 0) ||
+                (navigator.msMaxTouchPoints > 0));
+        };
+
+        // Check for fine pointer (mouse)
+        const hasFinePointer = () => {
+            return window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+        };
+
+        if (hasFinePointer() && !isTouchDevice()) {
+            // ====== Desktop Custom Cursor ======
+            const cursor = document.getElementById('cursor');
+            const trails = [
+                document.getElementById('cursor-trail-1'),
+                document.getElementById('cursor-trail-2'),
+                document.getElementById('cursor-trail-3')
+            ];
+
+            let mouseX = 0;
+            let mouseY = 0;
+            let cursorX = 0;
+            let cursorY = 0;
+            let trailPositions = trails.map(() => ({ x: 0, y: 0 }));
+
+            // Smooth cursor following
+            function animateCursor() {
+                // Smooth interpolation for main cursor
+                const dx = mouseX - cursorX;
+                const dy = mouseY - cursorY;
+                cursorX += dx * 0.15;
+                cursorY += dy * 0.15;
+                
+                cursor.style.left = cursorX + 'px';
+                cursor.style.top = cursorY + 'px';
+
+                // Animate trails with delay
+                trails.forEach((trail, index) => {
+                    const delay = (index + 1) * 0.08;
+                    const prevPos = index === 0 ? { x: cursorX, y: cursorY } : trailPositions[index - 1];
+                    
+                    trailPositions[index].x += (prevPos.x - trailPositions[index].x) * (0.2 - delay);
+                    trailPositions[index].y += (prevPos.y - trailPositions[index].y) * (0.2 - delay);
+                    
+                    trail.style.left = trailPositions[index].x + 'px';
+                    trail.style.top = trailPositions[index].y + 'px';
+                    trail.style.opacity = (1 - (index * 0.3)) * 0.5;
+                    trail.style.transform = `translate(-50%, -50%) scale(${1 - index * 0.2})`;
+                });
+
+                requestAnimationFrame(animateCursor);
+            }
+
+            // Track mouse position
+            document.addEventListener('mousemove', (e) => {
+                mouseX = e.clientX;
+                mouseY = e.clientY;
+                
+                cursor.classList.add('visible');
+                trails.forEach(trail => trail.classList.add('visible'));
+            });
+
+            // Hide cursor when leaving window
+            document.addEventListener('mouseleave', () => {
+                cursor.classList.remove('visible');
+                trails.forEach(trail => trail.classList.remove('visible'));
+            });
+
+            document.addEventListener('mouseenter', () => {
+                cursor.classList.add('visible');
+                trails.forEach(trail => trail.classList.add('visible'));
+            });
+
+            // Hover effect on interactive elements
+            const hoverElements = document.querySelectorAll('a, button, .hero-tag, .skill-item, .project-card, .contact-link, .about-card, .nav-links a, .mobile-menu-btn, .project-link');
+            
+            hoverElements.forEach(el => {
+                el.addEventListener('mouseenter', () => {
+                    cursor.classList.add('hover');
+                });
+                el.addEventListener('mouseleave', () => {
+                    cursor.classList.remove('hover');
+                });
+            });
+
+            // Click effect
+            document.addEventListener('mousedown', () => {
+                cursor.classList.add('click');
+            });
+
+            document.addEventListener('mouseup', () => {
+                cursor.classList.remove('click');
+            });
+
+            // Start cursor animation
+            animateCursor();
+
+        } else {
+            // ====== Mobile Touch Click Effect ======
+            document.addEventListener('touchstart', (e) => {
+                const touches = e.touches;
+                
+                for (let i = 0; i < touches.length; i++) {
+                    const touch = touches[i];
+                    createClickEffect(touch.clientX, touch.clientY);
+                }
+            }, { passive: true });
+        }
+
+        // Create click ripple effect (used for mobile)
+        function createClickEffect(x, y) {
+            const effect = document.createElement('div');
+            effect.className = 'click-effect';
+            effect.style.left = x + 'px';
+            effect.style.top = y + 'px';
+            document.body.appendChild(effect);
+
+            // Remove element after animation completes
+            effect.addEventListener('animationend', () => {
+                effect.remove();
+            });
+        }
     </script>
 </body>
 </html>
